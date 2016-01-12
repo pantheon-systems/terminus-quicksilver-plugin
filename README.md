@@ -3,6 +3,9 @@
 An experimental Commandline tool for managing Quicksilver operations on
 Pantheon.
 
+Preliminary work -- functionality may be renamed, removed, or moved to another
+component.
+
 ## Installation
 
 ```
