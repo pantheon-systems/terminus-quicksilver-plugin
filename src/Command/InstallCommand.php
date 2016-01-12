@@ -131,8 +131,7 @@ class InstallCommand extends Command
         }
 
         // Write out the pantheon.yml file again.
-        $dumper = new Dumper();
-        $pantheonYmlText = $dumper->dump($pantheonYml, PHP_INT_MAX, NULL, NULL, TRUE);
+        $pantheonYmlText = Yaml::dump($pantheonYml, PHP_INT_MAX);
         $this->taskWriteToFile($qsYml)
             ->text($pantheonYmlText)
             ->run();
