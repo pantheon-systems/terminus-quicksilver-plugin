@@ -1,0 +1,29 @@
+#
+# pantheon.yml
+#
+# Control the behavior of a site on https://pantheon.io
+#
+---
+api_version: 1
+
+#
+# Quicksilver Workflows allow you to specify scripts to run before or after
+# various operations on the Pantheon platform.
+#
+# Example:
+#
+#   workflows:
+#     deploy:
+#       before:
+#         - type: webphp
+#           description: A description of the task; appears in log file.
+#           script: private/scripts/path/to/script.php
+#
+# Available workflows:
+#
+#   sync_code:      New commits to master branch
+#   clone_database: Copy a database from one environment to another
+#   deploy:         Deploy code to test or live
+#   clear_cache:    Any time the Pantheon environment initiates a clear cache op
+#
+workflows:

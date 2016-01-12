@@ -1,0 +1,51 @@
+{
+    "name": "pantheon-systems/quicksilver-cli",
+    "description": "A commandline tool to help interact with Quicksilver on Pantheon.",
+    "keywords": ["Pantheon", "Console", "Development", "Quicksilver"],
+    "homepage": "http://github.com/pantheon-systems/quicksilver-cli",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name":      "Greg Anderson",
+            "email":     "greg@pantheon.io",
+            "homepage":  "https://pantheon.io"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/pantheon-systems/quicksilver-cli/issues"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/greg-1-anderson/Robo"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "pantheon-systems/cli": "~0.10.0",
+        "codegyre/robo": "dev-future",
+        "composer/installers": "~1.0",
+        "symfony/config": "2.7.*",
+        "symfony/console": "2.7.*",
+        "symfony/css-selector": "2.7.*",
+        "symfony/dependency-injection": "2.7.*",
+        "symfony/debug": "2.7.*",
+        "symfony/event-dispatcher": "2.7.*",
+        "symfony/filesystem": "2.7.*",
+        "symfony/finder": "2.7.*",
+        "symfony/http-foundation": "2.7.*",
+        "symfony/translation": "2.7.*",
+        "symfony/yaml": "2.7.*",
+        "twig/twig": "^1.22.2",
+        "symfony/dom-crawler": "2.7.*",
+        "phpseclib/phpseclib": "2.*",
+        "stecman/symfony-console-completion": "^0.5.1",
+        "guzzlehttp/guzzle": "~6.1",
+        "padraic/phar-updater": "~1.0@dev"
+    },
+    "bin": ["bin/quicksilver"],
+    "autoload": {
+        "psr-4": {"Pantheon\\Quicksilver\\": "src"}
+    }
+}
