@@ -110,7 +110,7 @@ class InstallCommand extends Command
         $pantheonYml = Yaml::parse($qsYml);
 
         $availableProjects = Finder::create()->files()->name("*.php")->in($installLocation);
-        foreach ($availableProjects as $scriptName) {
+        foreach ($availableProjects as $script) {
 
             // Fix up pantheon.yml
             // We could provide options to change these, and perhaps
@@ -120,18 +120,17 @@ class InstallCommand extends Command
             $phase = "before";
             $type = "webphp";
             $description = "Describe task here.";
-            $script = "$installLocation/scriptName";
 
             $pantheonYml['workflows'][$workflow][$phase][] =
                 [
                     'type' => $type,
                     'description' => $description,
-                    'script' => $script,
+                    'script' => (string) $script,
                 ];
         }
 
         // Write out the pantheon.yml file again.
-        $pantheonYmlText = Yaml::dump($pantheonYml, PHP_INT_MAX);
+        $pantheonYmlText = Yaml::dump($pantheonYml, PHP_INT_MAX, 2);
         $this->taskWriteToFile($qsYml)
             ->text($pantheonYmlText)
             ->run();
