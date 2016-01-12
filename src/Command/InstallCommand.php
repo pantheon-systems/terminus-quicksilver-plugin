@@ -48,8 +48,8 @@ class InstallCommand extends Command
 
         $qsHome = "$home/.quicksilver";
         $qsExamples = "$qsHome/examples";
-        $qsScripts = "$cwd/private/scripts";
-        $qsYml = "$cwd/pantheon.yml";
+        $qsScripts = "private/scripts";
+        $qsYml = "pantheon.yml";
 
         // If the examples do not exist, clone them
         $output->writeln('Fetch Quicksilver examples...');
