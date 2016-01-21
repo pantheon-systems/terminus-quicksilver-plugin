@@ -17,7 +17,7 @@
     },
     "require": {
         "php": ">=5.5.9",
-        "pantheon-systems/cli": "~0.10.0",
+        "pantheon-systems/cli": "~0.10",
         "codegyre/robo": "<2",
         "composer/installers": "~1.0",
         "symfony/config": "2.7.*",
