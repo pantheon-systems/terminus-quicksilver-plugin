@@ -113,7 +113,7 @@ class InstallCommand extends Command
         $this->taskCopyDir([$projectToInstall => $installLocation])->run();
 
         // Read the README file, if there is one
-        $readme = dirname($projectToInstall) . '/README.md';
+        $readme = $projectToInstall . '/README.md';
         if (file_exists($readme)) {
             $readmeContents = file_get_contents($readme);
             // Look for embedded quicksilver.yml examples in the README
