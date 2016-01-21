@@ -112,34 +112,84 @@ class InstallCommand extends Command
         $output->writeln("Copy $projectToInstall to $installLocation.");
         $this->taskCopyDir([$projectToInstall => $installLocation])->run();
 
+        // Read the README file, if there is one
+        $readme = dirname($projectToInstall) . '/README.md';
+        if (file_exists($readme)) {
+            $readmeContents = file_get_contents($readme);
+            // Look for embedded quicksilver.yml examples in the README
+            preg_match_all('/```yaml([^`]*)```/', $readmeContents, $matches, PREG_PATTERN_ORDER);
+            $pantheonYmlExample = static::findExamplePantheonYml($matches[1]);
+        }
+
+        // If the README does not have an example, make one up
+        if (empty($pantheonYmlExample)) {
+            $pantheonYmlExample =
+            [
+                'workflows' =>
+                [
+                    'deploy' =>
+                    [
+                        'before' =>
+                        [
+                            [
+                                'type' => 'webphp',
+                                'description' => 'Describe task here.',
+                            ],
+                        ]
+                    ],
+                ]
+            ];
+        }
+
         // Load the pantheon.yml file
         $pantheonYml = Yaml::parse($qsYml);
+        $changed = false;
 
         $availableProjects = Finder::create()->files()->name("*.php")->in($installLocation);
         foreach ($availableProjects as $script) {
-
-            // Fix up pantheon.yml
-            // We could provide options to change these, and perhaps
-            // provide defaults in an example.pantheon.yml in the
-            // project directory.
-            $workflow = "deploy";
-            $phase = "before";
-            $type = "webphp";
-            $description = "Describe task here.";
-
-            $pantheonYml['workflows'][$workflow][$phase][] =
-                [
-                    'type' => $type,
-                    'description' => $description,
-                    'script' => (string) $script,
-                ];
+            foreach ($pantheonYmlExample['workflows'] as $workflowName => $workflowData) {
+                foreach ($workflowData as $phaseName => $phaseData) {
+                    foreach ($phaseData as $taskData) {
+                        $taskData['script'] = (string) $script;
+                        if (!static::hasScript($pantheonYml, $workflowName, $phaseName, (string) $script)) {
+                            $pantheonYml['workflows'][$workflowName][$phaseName][] = $taskData;
+                            $changed = true;
+                        }
+                    }
+                }
+            }
         }
 
         // Write out the pantheon.yml file again.
-        $pantheonYmlText = Yaml::dump($pantheonYml, PHP_INT_MAX, 2);
-        $this->taskWriteToFile($qsYml)
-            ->text($pantheonYmlText)
-            ->run();
+        if ($changed) {
+            $output->writeln("Update pantheon.yml.");
 
+            $pantheonYmlText = Yaml::dump($pantheonYml, PHP_INT_MAX, 2);
+            $this->taskWriteToFile($qsYml)
+                ->text($pantheonYmlText)
+                ->run();
+        }
+    }
+
+    static protected function findExamplePantheonYml($listOfYml)
+    {
+        foreach ($listOfYml as $candidate) {
+            $examplePantheonYml = Yaml::parse($candidate);
+            if (array_key_exists('api_version', $examplePantheonYml)) {
+                return $examplePantheonYml;
+            }
+        }
+        return [];
+    }
+
+    static protected function hasScript($pantheonYml, $workflowName, $phaseName, $script) {
+        if (isset($pantheonYml['workflows'][$workflowName][$phaseName])) {
+            foreach ($pantheonYml['workflows'][$workflowName][$phaseName] as $taskInfo) {
+                if ($taskInfo['script'] == $script) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
