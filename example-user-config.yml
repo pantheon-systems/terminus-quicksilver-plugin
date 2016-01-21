@@ -1,0 +1,7 @@
+#
+# Quicksilver configuration file
+#
+# Copy to $HOME/.quicksilver/quicksilver.yml
+#
+#repositories:
+#  my-quicksilver-examples: https://github.com/me/my-quicksilver-examples.git

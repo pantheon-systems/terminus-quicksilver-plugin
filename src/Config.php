@@ -24,8 +24,11 @@ class Config
     {
         $this->config = [];
 
-        $this->loadFile(__DIR__.'/../config.yml');
-        $this->loadFile($this->getUserHomeDir().'/.pantheon/config.yml');
+        $applicationConfig = __DIR__ . '/../config.yml';
+        $userConfig = $this->getUserHomeDir() . '/.quicksilver/quicksilver.yml';
+
+        $this->loadFile($applicationConfig);
+        $this->loadFile($userConfig);
     }
 
     /**

@@ -43,6 +43,8 @@ class InstallCommand extends Command
         $application = $this->getApplication();
         // $collection = new RoboTaskCollection();
 
+        $repositoryLocations = $application->getConfig()->get('repositories');
+
         $home = getenv('HOME');
         $cwd = getcwd();
 
@@ -54,19 +56,23 @@ class InstallCommand extends Command
         // If the examples do not exist, clone them
         $output->writeln('Fetch Quicksilver examples...');
         @mkdir($qsHome);
-        if (!is_dir($qsExamples)) {
-            $this->taskGitStack()
-                ->cloneRepo("https://github.com/pantheon-systems/quicksilver-examples.git", $qsExamples)
-                ->run();
+        @mkdir($qsExamples);
+        foreach ($repositoryLocations as $name => $repo) {
+            $output->writeln("Check repo $name => $repo:");
+            $qsExampleDir = "$qsExamples/$name";
+            if (!is_dir($qsExampleDir)) {
+                $this->taskGitStack()
+                    ->cloneRepo("https://github.com/pantheon-systems/quicksilver-examples.git", $qsExampleDir)
+                    ->run();
+            }
+            else {
+                chdir($qsExampleDir);
+                $this->taskGitStack()
+                    ->pull()
+                    ->run();
+                chdir($cwd);
+            }
         }
-        else {
-            chdir($qsExamples);
-            $this->taskGitStack()
-                ->pull()
-                ->run();
-            chdir($cwd);
-        }
-
         $examplePantheonYml = dirname(dirname(__DIR__)) . "/templates/example.pantheon.yml";
 
         // Create a "started" pantheon.yml if it does not already exist.

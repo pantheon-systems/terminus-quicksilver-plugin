@@ -1,0 +1,9 @@
+#
+# Quicksilver configuration file
+#
+# List of Quicksilver example repositories containing scripts that
+# can be installed via `quicksilver install EXAMPLENAME`
+#
+repositories:
+  quicksilver-examples: https://github.com/pantheon-systems/quicksilver-examples.git
+
