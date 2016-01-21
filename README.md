@@ -14,6 +14,13 @@ composer global install pantheon-systems/quicksilver-cli
 
 Ensure that ~/.composer/vendor/bin is in your global `$PATH`.
 
+### Configuration
+```
+mkdir ~/.quicksilver
+cp example-user-config.yml ~/.quicksilver/quicksilver.yml
+```
+See contents of file for customization instructions.
+
 ## Commands
 
 The following commands are supported:
@@ -34,9 +41,3 @@ the site's pantheon.yml file.
 
 Edit the pantheon.yml file to suit.
 
-### Configure
-```
-mkdir ~/.quicksilver
-cp example-user-config.yml ~/.quicksilver/quicksilver.yml
-```
-See contents of file for customization instructions.
