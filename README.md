@@ -33,3 +33,10 @@ Installs one of the example projects from quicksilver-examples, and updates
 the site's pantheon.yml file.
 
 Edit the pantheon.yml file to suit.
+
+### Configure
+```
+mkdir ~/.quicksilver
+cp example-user-config.yml ~/.quicksilver/quicksilver.yml
+```
+See contents of file for customization instructions.
