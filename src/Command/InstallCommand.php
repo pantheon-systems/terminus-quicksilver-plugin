@@ -40,6 +40,7 @@ class InstallCommand extends Command
     {
         $output = new SymfonyStyle($input, $output);
 
+
         $application = $this->getApplication();
         // $collection = new RoboTaskCollection();
 
@@ -68,6 +69,7 @@ class InstallCommand extends Command
             $output->writeln("Change your working directory to a Drupal or WordPress site and run this command again.");
             return false;
         }
+        $output->writeln("Operating on a $siteType site.");
 
         // If the examples do not exist, clone them
         $output->writeln('Fetch Quicksilver examples...');
@@ -157,14 +159,20 @@ class InstallCommand extends Command
         $availableProjects = Finder::create()->files()->name("*.php")->in($installLocation);
         $availableScripts = [];
         foreach ($availableProjects as $script) {
-            $availableScripts[basename($script)] = (string)$script;
+            if (static::validScript($script, $siteType)) {
+                $availableScripts[basename($script)] = (string)$script;
+            }
+            else {
+                unlink((string)$script);
+            }
         }
         foreach ($pantheonYmlExample['workflows'] as $workflowName => $workflowData) {
             foreach ($workflowData as $phaseName => $phaseData) {
                 foreach ($phaseData as $taskData) {
-                    if (array_key_exists(basename($taskData['script']), $availableScripts)) {
-                        $taskData['script'] = $availableScripts[basename($taskData['script'])];
-                        if (!static::hasScript($pantheonYml, $workflowName, $phaseName, (string) $script)) {
+                    $scriptForThisExample = static::findScriptFromList(basename($taskData['script']), $availableScripts);
+                    if ($scriptForThisExample) {
+                        $taskData['script'] = $scriptForThisExample;
+                        if (!static::hasScript($pantheonYml, $workflowName, $phaseName, $scriptForThisExample)) {
                             $pantheonYml['workflows'][$workflowName][$phaseName][] = $taskData;
                             $changed = true;
                         }
@@ -184,6 +192,23 @@ class InstallCommand extends Command
         }
     }
 
+    static protected function findScriptFromList($script, $availableScripts)
+    {
+        if (array_key_exists($script, $availableScripts)) {
+            return $availableScripts[$script];
+        }
+        foreach ($availableScripts as $check => $path) {
+            if (preg_match("#$script#", $check)) {
+                return $path;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Search through the README, and find an example
+     * pantheon.yml snippet.
+     */
     static protected function findExamplePantheonYml($listOfYml)
     {
         foreach ($listOfYml as $candidate) {
@@ -195,6 +220,10 @@ class InstallCommand extends Command
         return [];
     }
 
+    /**
+     * Check to see if the provided pantheon.yml file
+     * already has an entry for the specified script.
+     */
     static protected function hasScript($pantheonYml, $workflowName, $phaseName, $script) {
         if (isset($pantheonYml['workflows'][$workflowName][$phaseName])) {
             foreach ($pantheonYml['workflows'][$workflowName][$phaseName] as $taskInfo) {
@@ -206,6 +235,11 @@ class InstallCommand extends Command
         return false;
     }
 
+    /**
+     * Look at filename patterns around the provided
+     * docroot, and determine whether this looks like
+     * a Drupal site or a WordPress site.
+     */
     static protected function determineSiteType($dir)
     {
         // If we see any of these patterns, we know the
@@ -232,5 +266,37 @@ class InstallCommand extends Command
         }
 
         return false;
+    }
+
+    /**
+     * Check to see if the provided script is valid for
+     * the specified site type (drupal or wordpress).
+     */
+    static protected function validScript($script, $siteType)
+    {
+        $scriptToCheck = basename($script);
+        $filenamePatterns =
+        [
+            'wordpress' => ['wp_', '_wp'],
+            'drupal' => [],
+        ];
+
+        // Look at all of the sets of filename patterns
+        foreach ($filenamePatterns as $checkType => $patternList) {
+            // Consider only those that are NOT of this site type
+            if ($checkType != $siteType) {
+                // If we can find one of the patterns in the
+                // basename of the script for a set that is NOT
+                // for this site type, then we have found an
+                // incompatible script.
+                $patternList[] = $checkType;
+                foreach ($patternList as $check) {
+                    if (strpos(basename($script), $check) !== FALSE) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }
