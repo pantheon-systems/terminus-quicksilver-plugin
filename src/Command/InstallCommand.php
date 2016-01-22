@@ -53,6 +53,22 @@ class InstallCommand extends Command
         $qsScripts = "private/scripts";
         $qsYml = "pantheon.yml";
 
+        // Load the pantheon.yml file
+        if (file_exists($qsYml)) {
+            $pantheonYml = Yaml::parse($qsYml);
+        }
+        else {
+            $examplePantheonYml = dirname(dirname(__DIR__)) . "/templates/example.pantheon.yml";
+            $pantheonYml = Yaml::parse($examplePantheonYml);
+        }
+        $changed = false;
+
+        $siteType = static::determineSiteType($cwd);
+        if (!$siteType) {
+            $output->writeln("Change your working directory to a Drupal or WordPress site and run this command again.");
+            return false;
+        }
+
         // If the examples do not exist, clone them
         $output->writeln('Fetch Quicksilver examples...');
         @mkdir($qsHome);
@@ -77,14 +93,6 @@ class InstallCommand extends Command
                     ->run();
                 chdir($cwd);
             }
-        }
-        $examplePantheonYml = dirname(dirname(__DIR__)) . "/templates/example.pantheon.yml";
-
-        // Create a "started" pantheon.yml if it does not already exist.
-        if (!is_file($qsYml)) {
-            $this->taskWriteToFile($qsYml)
-                ->textFromFile($examplePantheonYml)
-                ->run();
         }
 
         @mkdir(dirname($qsScripts));
@@ -146,10 +154,6 @@ class InstallCommand extends Command
             ];
         }
 
-        // Load the pantheon.yml file
-        $pantheonYml = Yaml::parse($qsYml);
-        $changed = false;
-
         $availableProjects = Finder::create()->files()->name("*.php")->in($installLocation);
         $availableScripts = [];
         foreach ($availableProjects as $script) {
@@ -199,6 +203,34 @@ class InstallCommand extends Command
                 }
             }
         }
+        return false;
+    }
+
+    static protected function determineSiteType($dir)
+    {
+        // If we see any of these patterns, we know the
+        // framework type
+        $frameworkPatterns =
+        [
+            'wordpress' =>
+            [
+                'wp-content',
+            ],
+            'drupal' =>
+            [
+                'misc/drupal.js',
+                'core/misc/drupal.js',
+            ],
+        ];
+
+        foreach ($frameworkPatterns as $framework => $fileList) {
+            foreach ($fileList as $checkFile) {
+                if (file_exists($checkFile)) {
+                    return $framework;
+                }
+            }
+        }
+
         return false;
     }
 }
