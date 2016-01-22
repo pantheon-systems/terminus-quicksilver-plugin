@@ -60,9 +60,14 @@ class InstallCommand extends Command
         foreach ($repositoryLocations as $name => $repo) {
             $output->writeln("Check repo $name => $repo:");
             $qsExampleDir = "$qsExamples/$name";
-            if (!is_dir($qsExampleDir)) {
+            if (!$repo) {
+                if (is_dir($qsExampleDir)) {
+                    $this->_deleteDir($qsExampleDir);
+                }
+            }
+            elseif (!is_dir($qsExampleDir)) {
                 $this->taskGitStack()
-                    ->cloneRepo("https://github.com/pantheon-systems/quicksilver-examples.git", $qsExampleDir)
+                    ->cloneRepo($repo, $qsExampleDir)
                     ->run();
             }
             else {
