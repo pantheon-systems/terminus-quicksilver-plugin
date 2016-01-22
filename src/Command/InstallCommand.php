@@ -151,11 +151,15 @@ class InstallCommand extends Command
         $changed = false;
 
         $availableProjects = Finder::create()->files()->name("*.php")->in($installLocation);
+        $availableScripts = [];
         foreach ($availableProjects as $script) {
-            foreach ($pantheonYmlExample['workflows'] as $workflowName => $workflowData) {
-                foreach ($workflowData as $phaseName => $phaseData) {
-                    foreach ($phaseData as $taskData) {
-                        $taskData['script'] = (string) $script;
+            $availableScripts[basename($script)] = (string)$script;
+        }
+        foreach ($pantheonYmlExample['workflows'] as $workflowName => $workflowData) {
+            foreach ($workflowData as $phaseName => $phaseData) {
+                foreach ($phaseData as $taskData) {
+                    if (array_key_exists(basename($taskData['script']), $availableScripts)) {
+                        $taskData['script'] = $availableScripts[basename($taskData['script'])];
                         if (!static::hasScript($pantheonYml, $workflowName, $phaseName, (string) $script)) {
                             $pantheonYml['workflows'][$workflowName][$phaseName][] = $taskData;
                             $changed = true;
