@@ -36,8 +36,7 @@ Prints version and other information about the quicksilver-cli tool.
 cd /path/to/local/pantheon/site
 quicksilver-cli install debug
 ```
-Installs one of the example projects from quicksilver-examples, and updates
-the site's pantheon.yml file.
+Installs one of the example projects from quicksilver-examples or the quicksilver script repository identified in `quicksilver.yml`, and updates the site's `pantheon.yml` file with the code snippet included in that directory's `readme.md`.
 
 Edit the pantheon.yml file to suit.
 
