@@ -14,6 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Yaml\Dumper;
@@ -32,6 +33,12 @@ class InstallCommand extends Command
                 'project',
                 InputArgument::REQUIRED,
                 'Quicksilver example project to install'
+            )
+            ->addOption(
+               'branch',
+               null,
+               InputOption::VALUE_REQUIRED,
+               'Branch to check out prior to installing an example (install from a PR)'
             )
             ->setDescription("Install a Pantheon example for Quicksilver");
     }
@@ -64,19 +71,25 @@ class InstallCommand extends Command
         }
         $changed = false;
 
-        $siteType = static::determineSiteType($cwd);
+        list($majorVersion, $siteType) = static::determineSiteType($cwd);
         if (!$siteType) {
             $output->writeln("Change your working directory to a Drupal or WordPress site and run this command again.");
             return false;
         }
-        $output->writeln("Operating on a $siteType site.");
+        $output->writeln("Operating on a $siteType $majorVersion site.");
+
+        // Get the branch to operate on.
+        $branch = $input->getOption('branch');
+        if (!$branch) {
+            $branch = 'master';
+        }
 
         // If the examples do not exist, clone them
         $output->writeln('Fetch Quicksilver examples...');
         @mkdir($qsHome);
         @mkdir($qsExamples);
         foreach ($repositoryLocations as $name => $repo) {
-            $output->writeln("Check repo $name => $repo:");
+            $output->writeln("Check branch $branch of repo $name => $repo:");
             $qsExampleDir = "$qsExamples/$name";
             if (!$repo) {
                 if (is_dir($qsExampleDir)) {
@@ -86,11 +99,17 @@ class InstallCommand extends Command
             elseif (!is_dir($qsExampleDir)) {
                 $this->taskGitStack()
                     ->cloneRepo($repo, $qsExampleDir)
+                    ->checkout($branch)
                     ->run();
             }
             else {
                 chdir($qsExampleDir);
+
+                // 'fetch' is not available in taskGitStack. Hm.
+                passthru('git fetch');
+
                 $this->taskGitStack()
+                    ->checkout($branch)
                     ->pull()
                     ->run();
                 chdir($cwd);
@@ -100,7 +119,7 @@ class InstallCommand extends Command
         @mkdir(dirname($qsScripts));
         @mkdir($qsScripts);
 
-        // Copy the requested command into the current site
+        // Copy the requested example into the current site
         $requestedProject = $input->getArgument('project');
         $availableProjects = Finder::create()->directories()->in($qsExamples);
         $candidates = [];
@@ -159,7 +178,7 @@ class InstallCommand extends Command
         $availableProjects = Finder::create()->files()->name("*.php")->in($installLocation);
         $availableScripts = [];
         foreach ($availableProjects as $script) {
-            if (static::validScript($script, $siteType)) {
+            if (static::validScript($script, $siteType, $majorVersion)) {
                 $availableScripts[basename($script)] = (string)$script;
             }
             else {
@@ -248,42 +267,43 @@ class InstallCommand extends Command
         [
             'wordpress' =>
             [
-                'wp-content',
+                4 => 'wp-content',
             ],
             'drupal' =>
             [
-                'misc/drupal.js',
-                'core/misc/drupal.js',
+                8 => 'core/misc/drupal.js',
+                7 => 'misc/druplicon.png',
+                6 => 'misc/drupal.js',
             ],
         ];
 
         foreach ($frameworkPatterns as $framework => $fileList) {
-            foreach ($fileList as $checkFile) {
+            foreach ($fileList as $majorVersion => $checkFile) {
                 if (file_exists($checkFile)) {
-                    return $framework;
+                    return [$majorVersion, $framework];
                 }
             }
         }
 
-        return false;
+        return [false, false];
     }
 
     /**
      * Check to see if the provided script is valid for
      * the specified site type (drupal or wordpress).
      */
-    static protected function validScript($script, $siteType)
+    static protected function validScript($script, $siteType, $majorVersion)
     {
         $scriptToCheck = basename($script);
         $filenamePatterns =
         [
-            'wordpress' => ['wp_', '_wp'],
+            'wordpress' => ['_wp'],
             'drupal' => [],
         ];
 
         // Look at all of the sets of filename patterns
         foreach ($filenamePatterns as $checkType => $patternList) {
-            // Consider only those that are NOT of this site type
+            // Consider those that are NOT of this site type
             if ($checkType != $siteType) {
                 // If we can find one of the patterns in the
                 // basename of the script for a set that is NOT
@@ -295,6 +315,25 @@ class InstallCommand extends Command
                         return false;
                     }
                 }
+            }
+            // For those patterns that ARE of this site type,
+            // we will check to see if the version matches the stipulate
+            // major version, if any.
+            else {
+                $patternList[] = $checkType;
+                foreach ($patternList as $check) {
+                    // If the script contains the CMS name followed by its
+                    // version (e.g. 'drupal8'), then it is a match.
+                    if (preg_match("#{$check}{$majorVersion}[^0-9]#", $script)) {
+                        return true;
+                    }
+                    // If the script contains the CMS name followed by any
+                    // other number, then this is NOT a match.
+                    if (preg_match("#{$check}[0-9]#", $script)) {
+                        return false;
+                    }
+                }
+
             }
         }
         return true;
