@@ -9,7 +9,7 @@ component.
 ## Installation
 
 ```
-composer global install pantheon-systems/quicksilver-cli
+composer global require pantheon-systems/quicksilver-cli
 ```
 
 Ensure that ~/.composer/vendor/bin is in your global `$PATH`.
