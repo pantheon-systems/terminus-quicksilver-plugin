@@ -8,6 +8,7 @@
 namespace Pantheon\Quicksilver;
 
 use Symfony\Component\Yaml\Parser;
+use Robo\TaskCollection\Collection as RoboTaskCollection;
 
 /**
  * Class Config
@@ -15,6 +16,10 @@ use Symfony\Component\Yaml\Parser;
  */
 class Config
 {
+    use \Robo\Task\FileSystem\loadTasks;
+    use \Robo\Task\File\loadTasks;
+    use \Robo\Task\Vcs\loadTasks;
+
     /**
      * @var array
      */
@@ -30,6 +35,54 @@ class Config
         $this->loadFile($applicationConfig);
         $this->loadFile($userConfig);
     }
+
+    /**
+     * Clone the example scripts
+     */
+    public function fetchExamples($output)
+    {
+        $home = getenv('HOME');
+        $qsHome = "$home/.quicksilver";
+        $qsExamples = "$qsHome/examples";
+
+        $repositoryLocations = $this->get('repositories');
+
+        // If the examples do not exist, clone them
+        $output->writeln('Fetch Quicksilver examples...');
+        @mkdir($qsHome);
+        @mkdir($qsExamples);
+        foreach ($repositoryLocations as $name => $repo) {
+            $output->writeln("Check branch $branch of repo $name => $repo:");
+            $qsExampleDir = "$qsExamples/$name";
+            if (!$repo) {
+                if (is_dir($qsExampleDir)) {
+                    $this->_deleteDir($qsExampleDir);
+                }
+            }
+            elseif (!is_dir($qsExampleDir)) {
+                $this->taskGitStack()
+                    ->cloneRepo($repo, $qsExampleDir)
+                    ->checkout($branch)
+                    ->run();
+            }
+            else {
+                $cwd = getcwd();
+                chdir($qsExampleDir);
+
+                // 'fetch' is not available in taskGitStack. Hm.
+                passthru('git fetch');
+
+                $this->taskGitStack()
+                    ->checkout($branch)
+                    ->pull()
+                    ->run();
+                chdir($cwd);
+            }
+        }
+
+        return $qsExamples;
+    }
+
 
     /**
      * @param $file

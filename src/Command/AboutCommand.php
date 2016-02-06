@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\Console\Command\AboutCommand.
+ * Contains \Pantheon\Quicksilver\Command\AboutCommand.
  */
 
 namespace Pantheon\Quicksilver\Command;
