@@ -74,7 +74,7 @@ class QuicksilverCommand extends TerminusCommand {
      * arguments is also not shown.
      *
      *  ## OPTIONS
-     * <email>
+     * <profile-name>
      * : The name of the section in 'profiles:' in ~/.quicksilver/quicksilver.yml to install.
      */
     public function profile($args, $assoc_args) {
@@ -108,7 +108,7 @@ class QuicksilverCommand extends TerminusCommand {
      * arguments is also not shown.
      *
      *  ## OPTIONS
-     * <email>
+     * <example-name>
      * : The example webhook project to install
      *
      * [--branch=<branch>]
