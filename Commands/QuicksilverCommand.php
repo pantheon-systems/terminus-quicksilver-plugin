@@ -1,6 +1,6 @@
 <?php
 /**
- * This command will install Quicksilver webhooks to a local
+ * This command will install Quicksilver examples to a local
  * working copy of a Pantheon site.
  *
  * See README.md for usage information.
@@ -17,7 +17,7 @@ use Pantheon\Quicksilver\Util\Config;
 use Pantheon\Quicksilver\Util\LocalSite;
 
 /**
- * Install Quicksilver webhooks from the Pantheon examples, or a personal working repository.
+ * Install Quicksilver operations from the Pantheon examples, or a personal working repository.
  *
  * @command quicksilver
  */
@@ -51,7 +51,7 @@ class QuicksilverCommand extends TerminusCommand {
     }
 
     /**
-     * Initialize Quicksilver, but do not install any webhooks
+     * Initialize Quicksilver, but do not install any operations
      */
     public function init($args, $assoc_args) {
         $cwd = getcwd();
@@ -100,7 +100,7 @@ class QuicksilverCommand extends TerminusCommand {
     }
 
     /**
-     * Install a webhook
+     * Set up a quicksilver operation.
      *
      * TODO: Terminus has a limitation that arg values are not correctly validated.
      * 'email' is handled specially, though, so we will use that for now until
@@ -109,7 +109,7 @@ class QuicksilverCommand extends TerminusCommand {
      *
      *  ## OPTIONS
      * <email>
-     * : The example webhook project to install
+     * : The example quicksilver project to install
      *
      * [--branch=<branch>]
      * : The branch / multidev environment to work on. Default is master.
