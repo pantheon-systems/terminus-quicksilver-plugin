@@ -7,9 +7,7 @@
 
 namespace Pantheon\Quicksilver\Util;
 
-//use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
-//use Symfony\Component\Yaml\Dumper;
 
 class LocalSite
 {

@@ -5,29 +5,26 @@
  * Contains \Drupal\Console\Config.
  */
 
-namespace Pantheon\Quicksilver;
+namespace Pantheon\Quicksilver\Util;
 
 use Symfony\Component\Yaml\Parser;
-use Robo\TaskCollection\Collection as RoboTaskCollection;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class Config
- * @package Pantheon\Quicksilver
+ * @package Pantheon\Quicksilver\Util
  */
 class Config
 {
-    use \Robo\Task\FileSystem\loadTasks;
-    use \Robo\Task\File\loadTasks;
-    use \Robo\Task\Vcs\loadTasks;
-
     /**
      * @var array
      */
     protected $config = [];
 
-    public function __construct()
+    public function __construct($logger)
     {
         $this->config = [];
+        $this->logger = $logger;
 
         $applicationConfig = __DIR__ . '/../config.yml';
         $userConfig = $this->getUserHomeDir() . '/.quicksilver/quicksilver.yml';
@@ -36,46 +33,50 @@ class Config
         $this->loadFile($userConfig);
     }
 
+    protected function log() {
+        return $this->logger;
+    }
+
+    public function profiles() {
+        return $this->get('profiles');
+    }
+
     /**
      * Clone the example scripts
      */
-    public function fetchExamples($output)
-    {
+    public function fetchExamples() {
         $home = getenv('HOME');
         $qsHome = "$home/.quicksilver";
         $qsExamples = "$qsHome/examples";
+        $cwd = getcwd();
 
         $repositoryLocations = $this->get('repositories');
 
         // If the examples do not exist, clone them
-        $output->writeln('Fetch Quicksilver examples...');
+        $this->log()->notice('Fetch Quicksilver examples...');
         @mkdir($qsHome);
         @mkdir($qsExamples);
         foreach ($repositoryLocations as $name => $repo) {
-            $output->writeln("Check branch $branch of repo $name => $repo:");
+            $branch = "master";
+            $this->log()->notice("Check branch $branch of repo $name => $repo:");
             $qsExampleDir = "$qsExamples/$name";
             if (!$repo) {
                 if (is_dir($qsExampleDir)) {
-                    $this->_deleteDir($qsExampleDir);
+                    $fs = new Filesystem();
+                    $fs->remove($qsExampleDir);
                 }
             }
             elseif (!is_dir($qsExampleDir)) {
-                $this->taskGitStack()
-                    ->cloneRepo($repo, $qsExampleDir)
-                    ->checkout($branch)
-                    ->run();
+                chdir(dirname($qsExampleDir));
+                passthru("git clone $repo $qsExampleDir");
+                passthru("git checkout $branch");
+                chdir($cwd);
             }
             else {
-                $cwd = getcwd();
                 chdir($qsExampleDir);
-
-                // 'fetch' is not available in taskGitStack. Hm.
                 passthru('git fetch');
-
-                $this->taskGitStack()
-                    ->checkout($branch)
-                    ->pull()
-                    ->run();
+                passthru("git checkout $branch");
+                passthru('git pull');
                 chdir($cwd);
             }
         }

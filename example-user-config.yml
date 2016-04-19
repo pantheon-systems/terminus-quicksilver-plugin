@@ -3,5 +3,25 @@
 #
 # Copy to $HOME/.quicksilver/quicksilver.yml
 #
+# To create your own repository with installable examples:
+#
+#     Clone the Pantheon Quicksilver examples project:
+#     https://github.com/pantheon-systems/quicksilver-examples
+#
+#     Customize it to suit, and add an entry for it in the
+#     'repositories:' section of this configuration file.
+#
+# To create a 'profile' -- a group of examples installable with
+# a single command (e.g. 'terminus quicksilver profile development'):
+#
+#     Add an entry to the 'profiles' section in this file.
+#     List the examples to install with that profile.
+#
 #repositories:
 #  my-quicksilver-examples: https://github.com/me/my-quicksilver-examples.git
+#
+#profiles:
+#  development:
+#    - db_sanitization
+#    - enable_dev_modules
+#    - drush_revert_features
