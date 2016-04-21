@@ -127,10 +127,10 @@ class QuicksilverCommand extends TerminusCommand {
 
     protected function doInstall($requestedProject, $localSite, $qsExamples) {
         $cwd = getcwd();
-
+        list($majorVersion, $siteType) = $localSite->determineSiteType($cwd);
         $qsScripts = "private/scripts";
         $qsYml = "pantheon.yml";
-
+        
         @mkdir(dirname($qsScripts));
         @mkdir($qsScripts);
 
