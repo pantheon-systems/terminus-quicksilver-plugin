@@ -126,11 +126,10 @@ class QuicksilverCommand extends TerminusCommand {
     }
 
     protected function doInstall($requestedProject, $localSite, $qsExamples) {
-        $cwd = getcwd();
-        list($majorVersion, $siteType) = $localSite->determineSiteType($cwd);
+        list($majorVersion, $siteType) = $localSite->determineSiteType();
         $qsScripts = "private/scripts";
         $qsYml = "pantheon.yml";
-        
+
         @mkdir(dirname($qsScripts));
         @mkdir($qsScripts);
 
@@ -229,7 +228,7 @@ class QuicksilverCommand extends TerminusCommand {
     }
 
     protected function prepareExamples($localSite) {
-        list($majorVersion, $siteType) = $localSite->determineSiteType($cwd);
+        list($majorVersion, $siteType) = $localSite->determineSiteType();
         if (!$siteType) {
             $this->log()->error("Change your working directory to a Drupal or WordPress site and run this command again.");
             return false;
