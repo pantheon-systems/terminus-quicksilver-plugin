@@ -6,7 +6,7 @@ A plugin for Terminus-CLI that allows for installation of Quicksilver webhooks f
 ```
 mkdir -p ~/terminus/plugins
 cd ~/terminus/plugins
-composer require pantheon-systems/terminus-quicksilver-plugin
+git clone https://github.com/pantheon-systems/terminus-quicksilver-plugin
 ```
 
 ### Configuration
