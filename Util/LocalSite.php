@@ -36,11 +36,11 @@ class LocalSite
 
         // Load the pantheon.yml file
         if (file_exists($qsYml)) {
-            $pantheonYml = Yaml::parse($qsYml);
+            $pantheonYml = Yaml::parse(file_get_contents($qsYml));
         }
         else {
             $examplePantheonYml = dirname(__DIR__) . "/templates/example.pantheon.yml";
-            $pantheonYml = Yaml::parse($examplePantheonYml);
+            $pantheonYml = Yaml::parse(file_get_contents($examplePantheonYml));
         }
         return $pantheonYml;
     }
