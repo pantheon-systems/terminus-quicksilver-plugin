@@ -1,15 +1,15 @@
 # Terminus Quicksilver Plugin
 
-A plugin for Terminus-CLI that allows for installation of Quicksilver webhooks from the Quicksilver examples, or a personal collection.
+[![Terminus v1.x Compatible](https://img.shields.io/badge/terminus-v1.x-green.svg)](https://github.com/pantheon-systems/terminus-quicksilver-plugin/tree/1.x)
+[![Terminus v0.x Compatible](https://img.shields.io/badge/terminus-v0.x-green.svg)](https://github.com/pantheon-systems/terminus-quicksilver-plugin/tree/0.x)
 
-### Installation
-```
-mkdir -p ~/terminus/plugins
-cd ~/terminus/plugins
-git clone https://github.com/pantheon-systems/terminus-quicksilver-plugin.git
-```
+Terminus Plugin that allows for installation of Quicksilver webhooks from the Quicksilver examples, or a personal collection, on [Pantheon](https://www.pantheon.io) sites.
 
-### Configuration
+Adds a command 'quicksilver' to Terminus 0.x which you can use to initialize a starting pantheon.yml file, or add a quicksilver web hook from the examples respository or a personal collection. For a version that works with Terminus 1.x, see the [1.x branch](https://github.com/pantheon-systems/terminus-secrets-plugin/tree/1.x).
+
+Use as directed by Quicksilver examples.
+
+## Configuration
 This plugin will allow the user to quickly install Quicksilver webhooks pulled from either the Pantheon Quicksilver examples project, or from a personal collection of commonly-used webhooks.
 
 To provide your own repository containing example webhooks that can be installed with the `terminus quicksilver install` command, set up a configuration file in your home directory, as shown below:
@@ -18,6 +18,8 @@ mkdir ~/.quicksilver
 cp example-user-config.yml ~/.quicksilver/quicksilver.yml
 ```
 See contents of this file for customization instructions.
+
+## Examples
 
 ### Init pantheon.yml File
 ```
@@ -39,4 +41,11 @@ Once the sample has been installed, read its README file and customize the panth
 ```
 cd /path/to/local/pantheon/site
 terminus quicksilver profile development
+```
+
+## Installation
+For help installing, see [Terminus's Wiki](https://github.com/pantheon-systems/terminus/wiki/Plugins)
+```
+mkdir -p ~/terminus/plugins
+composer create-project -d ~/terminus/plugins pantheon-systems/terminus-quicksilver-plugin:~0
 ```

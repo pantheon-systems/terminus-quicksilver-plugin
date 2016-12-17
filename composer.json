@@ -1,9 +1,12 @@
 {
-  "name": "pantheon-systems/terminus-quicksilver-plugin",
-  "description": "A plugin for Terminus-CLI that allows for installation of Quicksilver webhooks from the Quicksilver examples, or a personal collection.",
-  "homepage": "https://github.com/pantheon-systems/terminus-quicksilver-plugin",
-  "license": "MIT",
-  "require": {
-    "php": ">=5.4"
-  }
+    "name": "pantheon-systems/terminus-quicksilver-plugin",
+    "description": "A plugin for Terminus-CLI that allows for installation of Quicksilver webhooks from the Quicksilver examples, or a personal collection.",
+    "homepage": "https://github.com/pantheon-systems/terminus-quicksilver-plugin",
+    "license": "MIT",
+    "type": "terminus-plugin",
+    "extra": {
+        "terminus": {
+            "compatible-version": "^0"
+        }
+    }
 }
