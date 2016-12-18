@@ -8,9 +8,9 @@
 
 namespace Pantheon\TerminusQuicksilver\Commands;
 
-
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
+use Pantheon\Terminus\Commands\TerminusCommand;
 use Pantheon\TerminusQuicksilver\Util\Config;
 use Pantheon\TerminusQuicksilver\Util\LocalSite;
 
@@ -51,9 +51,9 @@ class QuicksilverCommand extends TerminusCommand
      * Initialize Quicksilver, but do not install any operations
      *
      * @command quicksilver:init
-     * @alias qs:init
+     * @aliases qs:init
      */
-    public function init($args, $assoc_args)
+    public function init()
     {
         $cwd = getcwd();
         $localSite = new LocalSite($cwd);
@@ -70,11 +70,11 @@ class QuicksilverCommand extends TerminusCommand
      * Install everything from a profile.
      *
      * @command quicksilver:profile
-     * @alias qs:profile
-     * @param string $requestedProfile
+     * @aliases qs:profile
+     * @param string $profile
      *
      */
-    public function profile($requestedProfile) {
+    public function profile($profile) {
         $cwd = getcwd();
         $localSite = new LocalSite($cwd);
         $qsExamples = $this->prepareExamples($localSite);
@@ -83,11 +83,11 @@ class QuicksilverCommand extends TerminusCommand
         }
 
         $profiles = $this->config()->profiles();
-        if (!isset($profiles[$requestedProfile])) {
-            $this->log()->error('There is no profile named {profile}.', ['profile' => $requestedProfile]);
+        if (!isset($profiles[$profile])) {
+            $this->log()->error('There is no profile named {profile}.', ['profile' => $profile]);
             return;
         }
-        $installationSet = $profiles[$requestedProfile];
+        $installationSet = $profiles[$profile];
         $this->log()->notice('Installing: ' . json_encode($installationSet));
 
         foreach ($installationSet as $installProject) {
@@ -99,10 +99,10 @@ class QuicksilverCommand extends TerminusCommand
      * Set up a quicksilver operation.
      *
      * @command quicksilver:install
-     * @alias qs:install
-     * @param string $requestedProject
+     * @aliases qs:install
+     * @param string $project
      */
-    public function install($requestedProject)
+    public function install($project)
     {
         $cwd = getcwd();
         $localSite = new LocalSite($cwd);
@@ -110,10 +110,10 @@ class QuicksilverCommand extends TerminusCommand
         if (!$qsExamples) {
           return;
         }
-        return $this->doInstall($requestedProject, $localSite, $qsExamples);
+        return $this->doInstall($project, $localSite, $qsExamples);
     }
 
-    protected function doInstall($requestedProject, $localSite, $qsExamples) {
+    protected function doInstall($project, $localSite, $qsExamples) {
         list($majorVersion, $siteType) = $localSite->determineSiteType();
         $qsScripts = "private/scripts";
         $qsYml = "pantheon.yml";
@@ -129,14 +129,14 @@ class QuicksilverCommand extends TerminusCommand
         $availableProjects = Finder::create()->directories()->in($qsExamples);
         $candidates = [];
         foreach ($availableProjects as $project) {
-            if (strpos($project, $requestedProject) !== FALSE) {
+            if (strpos($project, $project) !== FALSE) {
                 $candidates[] = $project;
             }
         }
 
         // Exit if there are no matches.
         if (empty($candidates)) {
-            $this->log()->notice("Could not find project $requestedProject.");
+            $this->log()->notice("Could not find project $project.");
             return;
         }
 /*
