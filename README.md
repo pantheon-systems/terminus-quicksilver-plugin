@@ -5,7 +5,7 @@
 
 Terminus Plugin that allows for installation of Quicksilver webhooks from the Quicksilver examples, or a personal collection, on [Pantheon](https://www.pantheon.io) sites.
 
-Adds a command 'quicksilver' to Terminus 0.x which you can use to initialize a starting pantheon.yml file, or add a quicksilver web hook from the examples respository or a personal collection. For a version that works with Terminus 1.x, see the [1.x branch](https://github.com/pantheon-systems/terminus-secrets-plugin/tree/1.x).
+Adds a command 'quicksilver' to Terminus 1.x which you can use to initialize a starting pantheon.yml file, or add a quicksilver web hook from the examples respository or a personal collection. For a version that works with Terminus 0.x, see the [0.x branch](https://github.com/pantheon-systems/terminus-secrets-plugin/tree/0.x).
 
 Use as directed by Quicksilver examples.
 

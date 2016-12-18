@@ -5,7 +5,7 @@
  * Contains \Drupal\Console\Config.
  */
 
-namespace Pantheon\Quicksilver\Util;
+namespace Pantheon\TerminusQuicksilver\Util;
 
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Filesystem\Filesystem;

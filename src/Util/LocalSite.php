@@ -5,7 +5,7 @@
  * Contains \Pantheon\Quicksilver\Command\AboutCommand.
  */
 
-namespace Pantheon\Quicksilver\Util;
+namespace Pantheon\TerminusQuicksilver\Util;
 
 use Symfony\Component\Yaml\Yaml;
 
@@ -39,7 +39,7 @@ class LocalSite
             $pantheonYml = Yaml::parse(file_get_contents($qsYml));
         }
         else {
-            $examplePantheonYml = dirname(__DIR__) . "/templates/example.pantheon.yml";
+            $examplePantheonYml = __DIR__ . "/../../templates/example.pantheon.yml";
             $pantheonYml = Yaml::parse(file_get_contents($examplePantheonYml));
         }
         return $pantheonYml;

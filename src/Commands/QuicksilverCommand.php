@@ -6,45 +6,42 @@
  * See README.md for usage information.
  */
 
-namespace Terminus\Commands;
+namespace Pantheon\TerminusQuicksilver\Commands;
 
-use Terminus\Commands\TerminusCommand;
-use Terminus\Session;
 
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
-use Pantheon\Quicksilver\Util\Config;
-use Pantheon\Quicksilver\Util\LocalSite;
+use Pantheon\TerminusQuicksilver\Util\Config;
+use Pantheon\TerminusQuicksilver\Util\LocalSite;
 
 /**
  * Install Quicksilver operations from the Pantheon examples, or a personal working repository.
- *
- * @command quicksilver
  */
-class QuicksilverCommand extends TerminusCommand {
+class QuicksilverCommand extends TerminusCommand
+{
     protected $config;
 
     /**
      * Object constructor
-     *
-     * @param array $options Options to construct the command object
-     * @return SiteCommand
      */
-    public function __construct(array $options = []) {
-      parent::__construct($options);
+    public function __construct()
+    {
+      parent::__construct();
 
       $this->loadUtil('LocalSite');
       $this->loadUtil('Config');
     }
 
-    protected function config() {
+    protected function config()
+    {
       if (!isset($this->config)) {
         $this->config = new Config($this->log());
       }
       return $this->config;
     }
 
-    protected function loadUtil($utilName) {
+    protected function loadUtil($utilName)
+    {
       if (!class_exists('Pantheon\\Quicksilver\\Util\\' . $utilName)) {
         include_once(__DIR__ . "/../Util/{$utilName}.php");
       }
@@ -52,8 +49,12 @@ class QuicksilverCommand extends TerminusCommand {
 
     /**
      * Initialize Quicksilver, but do not install any operations
+     *
+     * @command quicksilver:init
+     * @alias qs:init
      */
-    public function init($args, $assoc_args) {
+    public function init($args, $assoc_args)
+    {
         $cwd = getcwd();
         $localSite = new LocalSite($cwd);
         $pantheonYmlContents = $localSite->getPantheonYml();
@@ -68,16 +69,12 @@ class QuicksilverCommand extends TerminusCommand {
     /**
      * Install everything from a profile.
      *
-     * TODO: Terminus has a limitation that arg values are not correctly validated.
-     * 'email' is handled specially, though, so we will use that for now until
-     * this issue can be addressed.  Note also that the help text for positional
-     * arguments is also not shown.
+     * @command quicksilver:profile
+     * @alias qs:profile
+     * @param string $requestedProfile
      *
-     *  ## OPTIONS
-     * <email>
-     * : The name of the section in 'profiles:' in ~/.quicksilver/quicksilver.yml to install.
      */
-    public function profile($args, $assoc_args) {
+    public function profile($requestedProfile) {
         $cwd = getcwd();
         $localSite = new LocalSite($cwd);
         $qsExamples = $this->prepareExamples($localSite);
@@ -86,7 +83,6 @@ class QuicksilverCommand extends TerminusCommand {
         }
 
         $profiles = $this->config()->profiles();
-        $requestedProfile = array_shift($args);
         if (!isset($profiles[$requestedProfile])) {
             $this->log()->error('There is no profile named {profile}.', ['profile' => $requestedProfile]);
             return;
@@ -102,20 +98,12 @@ class QuicksilverCommand extends TerminusCommand {
     /**
      * Set up a quicksilver operation.
      *
-     * TODO: Terminus has a limitation that arg values are not correctly validated.
-     * 'email' is handled specially, though, so we will use that for now until
-     * this issue can be addressed.  Note also that the help text for positional
-     * arguments is also not shown.
-     *
-     *  ## OPTIONS
-     * <email>
-     * : The example quicksilver project to install
-     *
-     * [--branch=<branch>]
-     * : The branch / multidev environment to work on. Default is master.
+     * @command quicksilver:install
+     * @alias qs:install
+     * @param string $requestedProject
      */
-    public function install($args, $assoc_args) {
-        $requestedProject = array_shift($args);
+    public function install($requestedProject)
+    {
         $cwd = getcwd();
         $localSite = new LocalSite($cwd);
         $qsExamples = $this->prepareExamples($localSite);

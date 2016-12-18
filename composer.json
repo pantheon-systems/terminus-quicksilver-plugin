@@ -4,6 +4,9 @@
     "homepage": "https://github.com/pantheon-systems/terminus-quicksilver-plugin",
     "license": "MIT",
     "type": "terminus-plugin",
+    "autoload": {
+        "psr-4": { "Pantheon\\TerminusQuicksilver\\": "src" }
+    },
     "extra": {
         "terminus": {
             "compatible-version": "^0"
