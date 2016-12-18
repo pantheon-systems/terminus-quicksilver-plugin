@@ -24,14 +24,14 @@ See contents of this file for customization instructions.
 ### Init pantheon.yml File
 ```
 cd /path/to/local/pantheon/site
-terminus quicksilver init
+terminus quicksilver:init
 ```
 Writes a simple pantheon.yml file to get you started with Quicksilver.
 
 ### Install a Quicksilver Webhook
 ```
 cd /path/to/local/pantheon/site
-terminus quicksilver install debug
+terminus quicksilver:install debug
 ```
 Installs one of the example projects from quicksilver-examples, and updates the site's pantheon.yml file.  Searches for a project whose name contains the provided string; in the example above, the debugging_example will be installed.
 
@@ -40,7 +40,7 @@ Once the sample has been installed, read its README file and customize the panth
 ### Install a Predefined Set of Quicksilver Webhooks
 ```
 cd /path/to/local/pantheon/site
-terminus quicksilver profile development
+terminus quicksilver:profile development
 ```
 
 ## Installation
