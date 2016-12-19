@@ -49,3 +49,7 @@ For help installing, see [Terminus's Wiki](https://github.com/pantheon-systems/t
 mkdir -p ~/.terminus/plugins
 composer create-project -d ~/.terminus/plugins pantheon-systems/terminus-quicksilver-plugin:~0
 ```
+
+## Help
+
+Run `terminus list quicksilver` for a complete list of available commands. Use `terminus help <command>` to get help on one command.

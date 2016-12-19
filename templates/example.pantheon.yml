@@ -3,6 +3,9 @@
 #
 # Control the behavior of a site on https://pantheon.io
 #
+# php_version: 7
+# drush_version: 8
+#
 ---
 api_version: 1
 
