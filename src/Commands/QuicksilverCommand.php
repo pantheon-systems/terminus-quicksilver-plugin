@@ -113,7 +113,7 @@ class QuicksilverCommand extends TerminusCommand
         return $this->doInstall($project, $localSite, $qsExamples);
     }
 
-    protected function doInstall($project, $localSite, $qsExamples) {
+    protected function doInstall($requestedProject, $localSite, $qsExamples) {
         list($majorVersion, $siteType) = $localSite->determineSiteType();
         $qsScripts = "private/scripts";
         $qsYml = "pantheon.yml";
@@ -129,14 +129,14 @@ class QuicksilverCommand extends TerminusCommand
         $availableProjects = Finder::create()->directories()->in($qsExamples);
         $candidates = [];
         foreach ($availableProjects as $project) {
-            if (strpos($project, $project) !== FALSE) {
+            if (strpos($project, $requestedProject) !== FALSE) {
                 $candidates[] = $project;
             }
         }
 
         // Exit if there are no matches.
         if (empty($candidates)) {
-            $this->log()->notice("Could not find project $project.");
+            $this->log()->notice("Could not find project $requestedProject.");
             return;
         }
 /*

@@ -25,7 +25,7 @@ class Config
         $this->config = [];
         $this->logger = $logger;
 
-        $applicationConfig = __DIR__ . '/../config.yml';
+        $applicationConfig = __DIR__ . '/../../config.yml';
         $userConfig = $this->getUserHomeDir() . '/.quicksilver/quicksilver.yml';
 
         $this->loadFile($applicationConfig);
@@ -37,7 +37,7 @@ class Config
     }
 
     public function profiles() {
-        return $this->get('profiles');
+        return $this->get('profiles', []);
     }
 
     /**
@@ -49,7 +49,7 @@ class Config
         $qsExamples = "$qsHome/examples";
         $cwd = getcwd();
 
-        $repositoryLocations = $this->get('repositories');
+        $repositoryLocations = $this->get('repositories', []);
 
         // If the examples do not exist, clone them
         $this->log()->notice('Fetch Quicksilver examples...');
