@@ -19,7 +19,7 @@ use Pantheon\TerminusQuicksilver\Util\LocalSite;
  */
 class QuicksilverCommand extends TerminusCommand
 {
-    protected $config;
+    protected $quicksilverConfig;
 
     /**
      * Object constructor
@@ -32,12 +32,12 @@ class QuicksilverCommand extends TerminusCommand
       $this->loadUtil('Config');
     }
 
-    protected function config()
+    protected function qsConfig()
     {
-      if (!isset($this->config)) {
-        $this->config = new Config($this->log());
+      if (!isset($this->quicksilverConfig)) {
+        $this->quicksilverConfig = new Config($this->log());
       }
-      return $this->config;
+      return $this->quicksilverConfig;
     }
 
     protected function loadUtil($utilName)
@@ -82,7 +82,7 @@ class QuicksilverCommand extends TerminusCommand
           return;
         }
 
-        $profiles = $this->config()->profiles();
+        $profiles = $this->qsConfig()->profiles();
         if (!isset($profiles[$profile])) {
             $this->log()->error('There is no profile named {profile}.', ['profile' => $profile]);
             return;
@@ -229,7 +229,7 @@ class QuicksilverCommand extends TerminusCommand
             $branch = $assoc_args['branch'];
         }
 
-        return $this->config()->fetchExamples();
+        return $this->qsConfig()->fetchExamples();
     }
 
     static protected function findScriptFromList($script, $availableScripts)

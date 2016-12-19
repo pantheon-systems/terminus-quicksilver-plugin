@@ -12,7 +12,6 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class Config
- * @package Pantheon\Quicksilver\Util
  */
 class Config
 {
