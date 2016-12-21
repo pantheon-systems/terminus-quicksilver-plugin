@@ -32,6 +32,9 @@ class QuicksilverCommand extends TerminusCommand
       $this->loadUtil('Config');
     }
 
+    /**
+     * Return our configuration object.
+     */
     protected function qsConfig()
     {
       if (!isset($this->quicksilverConfig)) {
@@ -40,9 +43,13 @@ class QuicksilverCommand extends TerminusCommand
       return $this->quicksilverConfig;
     }
 
+    /**
+     * If a given utils class has not been loaded yet, then include
+     * it from the appropriate relative path.
+     */
     protected function loadUtil($utilName)
     {
-      if (!class_exists('Pantheon\\Quicksilver\\Util\\' . $utilName)) {
+      if (!class_exists('Pantheon\\TerminusQuicksilver\\Util\\' . $utilName)) {
         include_once(__DIR__ . "/../Util/{$utilName}.php");
       }
     }
@@ -113,6 +120,9 @@ class QuicksilverCommand extends TerminusCommand
         return $this->doInstall($project, $localSite, $qsExamples);
     }
 
+    /**
+     * Run an 'install' operation on one project.
+     */
     protected function doInstall($requestedProject, $localSite, $qsExamples) {
         list($majorVersion, $siteType) = $localSite->determineSiteType();
         $qsScripts = "private/scripts";
@@ -215,6 +225,10 @@ class QuicksilverCommand extends TerminusCommand
         }
     }
 
+    /**
+     * Download the examples projects from GitHub et. al.
+     * if they have not already been locally cached.
+     */
     protected function prepareExamples($localSite) {
         list($majorVersion, $siteType) = $localSite->determineSiteType();
         if (!$siteType) {
@@ -232,6 +246,10 @@ class QuicksilverCommand extends TerminusCommand
         return $this->qsConfig()->fetchExamples();
     }
 
+    /**
+     * Search for a script containing the requested name
+     * given a list of scripts (.php files) from an example project.
+     */
     static protected function findScriptFromList($script, $availableScripts)
     {
         if (array_key_exists($script, $availableScripts)) {

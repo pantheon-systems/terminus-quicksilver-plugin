@@ -2,7 +2,6 @@
 
 /**
  * @file
- * Contains \Pantheon\Quicksilver\Command\AboutCommand.
  */
 
 namespace Pantheon\TerminusQuicksilver\Util;
@@ -25,11 +24,17 @@ class LocalSite
         $this->docroot = $docroot;
     }
 
+    /**
+     * Return the path to the pantheon.yml file.
+     */
     public function getPantheonYmlPath()
     {
         return $this->dir . "/pantheon.yml";
     }
 
+    /**
+     * Load the pantheon.yml file and return its parsed contents.
+     */
     public function getPantheonYml()
     {
         $qsYml = $this->getPantheonYmlPath();
@@ -45,6 +50,9 @@ class LocalSite
         return $pantheonYml;
     }
 
+    /**
+     * Write a modified pantheon.yml file back to disk.
+     */
     public function writePantheonYml($pantheonYml)
     {
         $qsYml = $this->getPantheonYmlPath();
@@ -52,41 +60,29 @@ class LocalSite
         return file_put_contents($qsYml, $pantheonYmlText);
     }
 
+    /**
+     * Determine whether the document root is at the repository root,
+     * or whether it is in the 'web' directory.
+     */
     public function getDocroot()
     {
         if (!$this->docroot) {
             $this->docroot = '';
             $pantheonYml = $this->getPantheonYml();
-            if (isset($pantheonYml['environment']['DOCROOT'])) {
-                $this->docroot = $pantheonYml['environment']['DOCROOT'];
+            if (isset($pantheonYml['web_docroot']) && $pantheonYml['web_docroot']) {
+                $this->docroot = 'web';
             }
         }
         return $this->docroot;
     }
 
+    /**
+     * Get the full path to the docroot.
+     */
     public function getDocRootPath()
     {
         $docroot = $this->getDocroot();
         return empty(trim($docroot, '/')) ? $this->dir : $this->dir . '/' . $docroot;
-    }
-
-    public function writeDocRoot($newDocroot)
-    {
-        if (strpos($newDocroot, '/')) {
-            if (realpath($newDocroot) == realpath($this->dir) || ($newDocroot == '/')) {
-                $newDocroot = '';
-            }
-            elseif (dirname($newDocroot) == $this->dir) {
-                $newDocroot = basename($newDocroot);
-            }
-            else {
-                throw new Exception("Document root must be immediately inside the repository root.");
-            }
-        }
-        $this->docroot = $newDocroot;
-        $pantheonYml = $this->getPantheonYml();
-        $pantheonYml['environment']['DOCROOT'] = $this->docroot;
-        $this->writePantheonYml($pantheonYml);
     }
 
     /**

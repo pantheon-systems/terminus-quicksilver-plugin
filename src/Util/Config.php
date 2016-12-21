@@ -1,8 +1,7 @@
 <?php
 
 /**
- * @file
- * Contains \Drupal\Console\Config.
+ * Configuration storage for Terminus Quicksilver plugin.
  */
 
 namespace Pantheon\TerminusQuicksilver\Util;
@@ -32,10 +31,16 @@ class Config
         $this->loadFile($userConfig);
     }
 
+    /**
+     * Return our logger
+     */
     protected function log() {
         return $this->logger;
     }
 
+    /**
+     * Fetch available profiles from our configuration
+     */
     public function profiles() {
         return $this->get('profiles', []);
     }
@@ -85,6 +90,8 @@ class Config
 
 
     /**
+     * Read a .yml file and return its parsed contents.
+     *
      * @param $file
      * @return array
      */
