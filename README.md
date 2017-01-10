@@ -47,7 +47,7 @@ terminus quicksilver:profile development
 For help installing, see [Terminus's Wiki](https://github.com/pantheon-systems/terminus/wiki/Plugins)
 ```
 mkdir -p ~/.terminus/plugins
-composer create-project -d ~/.terminus/plugins pantheon-systems/terminus-quicksilver-plugin:~0
+composer create-project -d ~/.terminus/plugins pantheon-systems/terminus-quicksilver-plugin:~1
 ```
 
 ## Help
