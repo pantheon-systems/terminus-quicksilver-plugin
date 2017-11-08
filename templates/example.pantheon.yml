@@ -31,3 +31,7 @@ api_version: 1
 #   clear_cache:    Any time the Pantheon environment initiates a clear cache op
 #
 workflows:
+  sync_code: { }
+  clone_database: { }
+  deploy: { }
+  clear_cache: { }

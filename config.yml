@@ -4,6 +4,8 @@
 # List of Quicksilver example repositories containing scripts that
 # can be installed via `quicksilver install EXAMPLENAME`
 #
+# See `example-user-config.yml` for instructions on how to provied
+# your own configuration.
+#
 repositories:
   quicksilver-examples: https://github.com/pantheon-systems/quicksilver-examples.git
-

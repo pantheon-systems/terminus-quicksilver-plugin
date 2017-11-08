@@ -27,9 +27,6 @@ class QuicksilverCommand extends TerminusCommand
     public function __construct()
     {
       parent::__construct();
-
-      $this->loadUtil('LocalSite');
-      $this->loadUtil('Config');
     }
 
     /**
@@ -41,17 +38,6 @@ class QuicksilverCommand extends TerminusCommand
         $this->quicksilverConfig = new Config($this->log());
       }
       return $this->quicksilverConfig;
-    }
-
-    /**
-     * If a given utils class has not been loaded yet, then include
-     * it from the appropriate relative path.
-     */
-    protected function loadUtil($utilName)
-    {
-      if (!class_exists('Pantheon\\TerminusQuicksilver\\Util\\' . $utilName)) {
-        include_once(__DIR__ . "/../Util/{$utilName}.php");
-      }
     }
 
     /**
@@ -68,7 +54,6 @@ class QuicksilverCommand extends TerminusCommand
         if (empty($pantheonYmlContents['workflows'])) {
           $pantheonYmlContents['workflows'] = [];
         }
-        $this->log()->warning('Removing comments from pantheon.yml.');
         $localSite->writePantheonYml($pantheonYmlContents);
         $this->log()->notice('Wrote pantheon.yml file.');
     }
@@ -219,7 +204,6 @@ class QuicksilverCommand extends TerminusCommand
 
         // Write out the pantheon.yml file again.
         if ($changed) {
-            $this->log()->warning('Removing comments from pantheon.yml.');
             $pantheonYml = $localSite->writePantheonYml($pantheonYml);
             $this->log()->notice("Updated pantheon.yml.");
         }

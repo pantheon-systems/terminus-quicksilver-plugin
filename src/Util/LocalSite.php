@@ -6,12 +6,14 @@
 
 namespace Pantheon\TerminusQuicksilver\Util;
 
+use Consolidation\Comments\Comments;
 use Symfony\Component\Yaml\Yaml;
 
 class LocalSite
 {
     protected $dir;
     protected $docroot;
+    protected $comments;
 
     /**
      * Initialize a reference to a local clone of a Pantheon site.
@@ -41,12 +43,15 @@ class LocalSite
 
         // Load the pantheon.yml file
         if (file_exists($qsYml)) {
-            $pantheonYml = Yaml::parse(file_get_contents($qsYml));
+            $pantheonYmlContents = file_get_contents($qsYml);
         }
         else {
             $examplePantheonYml = __DIR__ . "/../../templates/example.pantheon.yml";
-            $pantheonYml = Yaml::parse(file_get_contents($examplePantheonYml));
+            $pantheonYmlContents = file_get_contents($examplePantheonYml);
         }
+        $pantheonYml = Yaml::parse($pantheonYmlContents);
+        $this->comments = new Comments();
+        $this->comments->collect(explode("\n", $pantheonYmlContents));
         return $pantheonYml;
     }
 
@@ -56,7 +61,9 @@ class LocalSite
     public function writePantheonYml($pantheonYml)
     {
         $qsYml = $this->getPantheonYmlPath();
-        $pantheonYmlText = Yaml::dump($pantheonYml, PHP_INT_MAX, 2);
+        $pantheonYml = Yaml::dump($pantheonYml, PHP_INT_MAX, 2);
+        $pantheonYmlLines = $this->comments->inject(explode("\n", $pantheonYml));
+        $pantheonYmlText = implode("\n", $pantheonYmlLines);
         return file_put_contents($qsYml, $pantheonYmlText);
     }
 
