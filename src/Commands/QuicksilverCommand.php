@@ -110,11 +110,11 @@ class QuicksilverCommand extends TerminusCommand
      */
     protected function doInstall($requestedProject, $localSite, $qsExamples) {
         list($majorVersion, $siteType) = $localSite->determineSiteType();
-        $qsScripts = $localSite->getDocRootPath() . "/private/scripts";
+        $qsScripts = "private/scripts";
         $qsYml = "pantheon.yml";
 
-        @mkdir(dirname($qsScripts));
-        @mkdir($qsScripts);
+        @mkdir(dirname($localSite->getDocRootPath() . "/" . $qsScripts));
+        @mkdir($localSite->getDocRootPath() . "/" . $qsScripts);
 
         // Load the pantheon.yml file
         $pantheonYml = $localSite->getPantheonYml();
@@ -142,11 +142,12 @@ class QuicksilverCommand extends TerminusCommand
 */
         // Copy the project to the installation location
         $projectToInstall = (string) array_pop($candidates);
-        $installLocation = "$qsScripts/" . basename($projectToInstall);
-        $this->log()->notice("Copy $projectToInstall to $installLocation.");
+        $projectToInstallName = basename($projectToInstall);
+        $installLocation = $qsScripts . "/" . $projectToInstallName;
+        $this->log()->notice("Copy $projectToInstallName to $installLocation.");
 
         // Copy the project directory
-        static::recursiveCopy($projectToInstall, $installLocation);
+        static::recursiveCopy($projectToInstall, $localSite->getDocRootPath() . "/" . $installLocation);
 
         // Read the README file, if there is one
         $readme = $projectToInstall . '/README.md';
@@ -177,11 +178,11 @@ class QuicksilverCommand extends TerminusCommand
             ];
         }
 
-        $availableProjects = Finder::create()->files()->name("*.php")->in($installLocation);
+        $availableProjects = Finder::create()->files()->name("*.php")->in($localSite->getDocRootPath() . "/" . $installLocation);
         $availableScripts = [];
         foreach ($availableProjects as $script) {
             if ($localSite->validPattern($script, $siteType, $majorVersion)) {
-                $availableScripts[basename($script)] = (string)$script;
+                $availableScripts[basename($script)] = $installLocation . "/" . $script->getRelativePathname();
             }
             else {
                 unlink((string)$script);
