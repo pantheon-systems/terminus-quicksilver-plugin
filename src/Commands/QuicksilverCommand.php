@@ -205,9 +205,28 @@ class QuicksilverCommand extends TerminusCommand
 
         // Write out the pantheon.yml file again.
         if ($changed) {
+            $pantheonYml = $this->fixFloats($pantheonYml);
             $pantheonYml = $localSite->writePantheonYml($pantheonYml);
             $this->log()->notice("Updated pantheon.yml.");
         }
+    }
+
+    protected function fixFloats($data)
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $data[$key] = $this->fixFloats($value);
+            }
+            elseif (is_float($value)) {
+                $data[$key] = (string)$value;
+                // Integer values would not be a float if it did not have
+                // a ".0" in the source data, so put that back.
+                if ($value == floor($value)) {
+                    $data[$key] .= '.0';
+                }
+            }
+        }
+        return $data;
     }
 
     /**
