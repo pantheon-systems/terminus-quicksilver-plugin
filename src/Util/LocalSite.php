@@ -60,11 +60,42 @@ class LocalSite
      */
     public function writePantheonYml($pantheonYml)
     {
+        // Convert floats in the data to strings so that we can preserve the ".0"
+        $pantheonYml = $this->fixFloats($pantheonYml);
+
         $qsYml = $this->getPantheonYmlPath();
         $pantheonYml = Yaml::dump($pantheonYml, PHP_INT_MAX, 2);
         $pantheonYmlLines = $this->comments->inject(explode("\n", $pantheonYml));
         $pantheonYmlText = implode("\n", $pantheonYmlLines);
+
+        // Horrible workaround. We cannot get our yaml parser to output a
+        // string such as '7.0' without wrapping it in quotes. If the data
+        // type is numeric, then the yaml parser will output '7' rather than
+        // '7.0'. We therefore convert floats to strings so that we
+        // can retain the '.0' on the end; however, this causes the output
+        // value to be wrapped in quotes, which the Pantheon schema parser
+        // rejects. We therefore strip quotes from numeric types here.
+        $pantheonYmlText = preg_replace("#^([^:]+: *)'([0-9.]+)'$#m", '\1\2', $pantheonYmlText);
+
         return file_put_contents($qsYml, $pantheonYmlText);
+    }
+
+    protected function fixFloats($data)
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $data[$key] = $this->fixFloats($value);
+            }
+            elseif (is_float($value)) {
+                $data[$key] = (string)$value;
+                // Integer values would not be a float if it did not have
+                // a ".0" in the source data, so put that back.
+                if ($value == floor($value)) {
+                    $data[$key] .= '.0';
+                }
+            }
+        }
+        return $data;
     }
 
     /**
