@@ -19,6 +19,8 @@ class Config
      */
     protected $config = [];
 
+    protected $logger;
+
     public function __construct($logger)
     {
         $this->config = [];
