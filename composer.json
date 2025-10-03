@@ -1,5 +1,5 @@
 {
-    "name": "pantheon-systems/terminus-quicksilver-plugin",
+    "name": "lpeabody/terminus-quicksilver-plugin",
     "description": "A plugin for Terminus-CLI that allows for installation of Quicksilver webhooks from the Quicksilver examples, or a personal collection.",
     "homepage": "https://github.com/pantheon-systems/terminus-quicksilver-plugin",
     "license": "MIT",
@@ -9,10 +9,10 @@
     },
     "extra": {
         "terminus": {
-            "compatible-version": "^1.4|^2"
+            "compatible-version": "^3"
         }
     },
     "require": {
-        "consolidation/comments": "^1.0"
+        "consolidation/comments": "^1|^2"
     }
 }
