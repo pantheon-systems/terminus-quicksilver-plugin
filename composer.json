@@ -9,10 +9,10 @@
     },
     "extra": {
         "terminus": {
-            "compatible-version": "^1.4|^2"
+            "compatible-version": "^1.4|^2|^3|^4"
         }
     },
     "require": {
-        "consolidation/comments": "^1.0"
+        "consolidation/comments": "^1|^2"
     }
 }
