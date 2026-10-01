@@ -14,5 +14,10 @@
     },
     "require": {
         "consolidation/comments": "^1|^2"
+    },
+    "config": {
+        "audit": {
+            "block-insecure": false
+        }
     }
 }
